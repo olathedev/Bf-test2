@@ -1,6 +1,3 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
@@ -10,15 +7,12 @@ function App() {
   const messages = useSelector((state: RootState) => state.messages);
 
   return (
-    <div>
-      <WebSocketComponent />
+    <div className="app-container">
       <div>
-        <h2>Messages:</h2>
-        <ul>
-          {messages.map((msg) => (
-            <li key={msg.id}>{msg.content}</li>
-          ))}
-        </ul>
+        <h1 className="app-header">
+          Blockfuse Test 2 Socket.IO Notification Frontend Example
+        </h1>
+        <WebSocketComponent />
       </div>
     </div>
   );

@@ -1,49 +1,63 @@
-// src/WebSocket.tsx
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { addMessage } from './messageSlice';
+import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 
 const WebSocketComponent: React.FC = () => {
-  const dispatch = useDispatch();
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<string>('info');
+  const [socket, setSocket] = useState<any>(null);
 
   useEffect(() => {
-    const socket = new WebSocket('ws://localhost:4000');
+    const socketInstance = io('https://your-websocket-server-url'); 
+    setSocket(socketInstance);
 
+    socketInstance.on('event1', (msg: { type: string; text: string }) => {
+      console.log('Event 1 message received:', msg);
+      setMessage(msg.text);
+      setMessageType(msg.type);
+    });
 
-    socket.onopen = () => {
-      console.log('Connected to WebSocket');
-    };
+    socketInstance.on('event2', (msg: { type: string; text: string }) => {
+      console.log('Event 2 message received:', msg);
+      setMessage(msg.text);
+      setMessageType(msg.type);
+    });
 
-   
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      dispatch(addMessage({ id: Date.now(), content: data.message }));
-    };
+    socketInstance.on('event3', (msg: { type: string; text: string }) => {
+      console.log('Event 3 message received:', msg);
+      setMessage(msg.text);
+      setMessageType(msg.type);
+    });
 
-    
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    socketInstance.on('event4', (msg: { type: string; text: string }) => {
+      console.log('Event 4 message received:', msg);
+      setMessage(msg.text);
+      setMessageType(msg.type);
+    });
 
-   
-    socket.onclose = (event) => {
-      if (event.wasClean) {
-        console.log('Closed cleanly');
-      } else {
-        console.error('Connection died');
+    socketInstance.on('event5', (msg: { type: string; text: string }) => {
+      console.log('Event 5 message received:', msg);
+      setMessage(msg.text);
+      setMessageType(msg.type); 
+    });
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.disconnect();
       }
     };
-
-   
-    return () => {
-      socket.close();
-    };
-  }, [dispatch]);
+  }, []);
 
   return (
     <div>
-      <h2>WebSocket Component</h2>
-      <p>Listening for messages...</p>
+      {message ? (
+        <div className={`notification notification-${messageType}`}>
+          <p>{message}</p>
+        </div>
+      ) : (
+        <div className="waiting-message">
+          Waiting for messages...
+        </div>
+      )}
     </div>
   );
 };
